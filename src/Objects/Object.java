@@ -10,16 +10,33 @@ public abstract class Object {
     protected boolean collidable;
     protected boolean destroyable;
     protected boolean visible;
+
+    private int width;
+    private int height;
+
+
     public Object(String name){
         String imgPath = "./assets/img/res/" + name + ".png";
         ImageIcon ii = new ImageIcon(imgPath);
         objectImg = ii.getImage();
+
+        width = objectImg.getWidth(null);
+        height = objectImg.getHeight(null);
+
     }
     public void setX(int x) {
         this.x = x;
     }
     public void setY(int y) {
         this.y = y;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 
     public void setCollidable(boolean collidable) {

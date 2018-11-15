@@ -31,10 +31,10 @@ public class MapGenerate {
             for(int j = 0; j < collumn; j++){
                 char c = s.charAt(j);
                 //System.out.println(i + " " + j);
-                map.add(new Ground(j*32, (i-2)*32));
-                if (c == '#')  map.add(new FixedWall(j*32, (i-2)*32));
-                else if (c == '*') map.add(new Crate(j*32, (i-2)*32));
-                else if (c == 'x') {map.add(new Portal(j*32, (i-2)*32)); map.add(new Crate(j*32, (i-2)*32));}
+                map.add(new Ground(j*36, (i-2)*36));
+                if (c == '#')  map.add(new FixedWall(j*36, (i-2)*36));
+                else if (c == '*') map.add(new Crate(j*36, (i-2)*36));
+                else if (c == 'x') {map.add(new Portal(j*36, (i-2)*36)); map.add(new Crate(j*36, (i-2)*36));}
 
 
             }

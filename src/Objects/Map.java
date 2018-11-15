@@ -13,6 +13,10 @@ public class Map {
         mapGenerator = new MapGenerate(this);
     }
 
+    public Map(String mapFile) {
+
+    }
+
     public void add(Object o){
         objectList.add(o);
     }

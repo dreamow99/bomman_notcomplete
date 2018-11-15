@@ -61,9 +61,9 @@ public class Board extends JPanel implements ActionListener {
     }
 
     private void step(){
+        player.updateMove(this);
         player.move();
-
-        repaint(player.getX()-1, player.getY()-2, player.getWidth()+2, player.getHeight()+3);
+        repaint();
     }
 
     private class TAdapter extends KeyAdapter {
