@@ -4,15 +4,15 @@ import javax.swing.*;
 import java.awt.*;
 
 public abstract class Object {
-    private Image objectImg;
+    protected Image objectImg;
     protected int x;
     protected int y;
     protected boolean collidable;
     protected boolean destroyable;
     protected boolean visible;
 
-    private int width;
-    private int height;
+    protected int width;
+    protected int height;
 
 
     public Object(String name){

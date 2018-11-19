@@ -1,16 +1,15 @@
-import GameManager.MapGenerate;
-import Objects.FixedWall;
+
 import Screens.Board;
 
 import javax.swing.JFrame;
 import java.awt.EventQueue;
 
 public class Game extends JFrame {
-    public final int gameWidth = 1280;
-    public final int gameHeight = 720;
+    private final int gameWidth = 600;
+    private final int gameHeight = 400;
     private final String gameTitle = "Bomberman";
 
-    public Game(){
+    private Game(){
         initUI();
     }
     private void initUI(){

@@ -3,7 +3,6 @@ package Screens;
 
 import Objects.Character.Player;
 import Objects.Map;
-import Objects.Object;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +15,7 @@ public class Board extends JPanel implements ActionListener {
 
     private Timer timer;
     private Map map;
-    private final int delay = 10;
+    private final int delay = 1;
     private Player player;
 
     public Board(){
@@ -25,17 +24,13 @@ public class Board extends JPanel implements ActionListener {
 
     private void initBoard(){
         addKeyListener(new TAdapter());
-        loadImage();
         map = new Map();
         timer = new Timer(delay, this);
         timer.start();
-        player = new Player();
+        player = map.getPlayer();
         this.setFocusable(true);
     }
 
-    private void loadImage(){
-
-    }
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -47,12 +42,9 @@ public class Board extends JPanel implements ActionListener {
     private void doDrawing(Graphics g){
         Graphics2D g2d = (Graphics2D) g;
 
-        for (int i = 0; i < map.objectList.size(); i++){
-            Object o = map.objectList.get(i);
-            g2d.drawImage(o.getObjectImg(), o.getX(), o.getY(), this);
+        map.draw(g2d, this);
 
-        }
-        g2d.drawImage(player.getImage(), player.getX(), player.getY(), this);
+        g2d.drawImage(player.getObjectImg(), player.getX(), player.getY(), this);
     }
 
     @Override
@@ -71,7 +63,6 @@ public class Board extends JPanel implements ActionListener {
         @Override
         public void keyReleased(KeyEvent e) {
             player.keyReleased(e);
-
         }
 
         @Override
