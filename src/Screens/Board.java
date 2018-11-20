@@ -1,6 +1,7 @@
 package Screens;
 
 
+import Objects.Bomb;
 import Objects.Character.Enemy1;
 import Objects.Character.Player;
 import Objects.Map;
@@ -33,23 +34,51 @@ public class Board extends JPanel implements ActionListener {
         this.setFocusable(true);
     }
 
-    public void update() throws InterruptedException{
+    public Map getMap() {
+        return map;
+    }
+
+    public void update(Graphics g) {
         for (int i = 0; i < map.objectList.size(); i++)
         {
             Object o = map.objectList.get(i);
             if (o instanceof Enemy1)
-                ((Enemy1) o).move();
+                try{
+                    ((Enemy1) o).move(this);
+                } catch (InterruptedException e){
+                    e.printStackTrace();
+                }
         }
+
+        for (int i = 0; i < map.objectList.size(); i++)
+        {
+            Object o = map.objectList.get(i);
+            if (o instanceof Bomb){
+                Bomb b = (Bomb) o;
+                if (b.timeout){
+                    player.bombs.remove(b);
+                    map.objectList.remove(b);
+                }
+            }
+        }
+
+        if (!player.bombs.isEmpty()){
+            for (Bomb b : player.bombs){
+                if (b.timeout){
+                    continue;
+                }
+                b.live(player.getX(), player.getY(), player.getWidth(), player.getHeight());
+                map.add(b);
+            }
+        }
+
+
         repaint();
     }
 
     @Override
     protected void paintComponent(Graphics g) {
-        try {
-            update();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        update(g);
         super.paintComponent(g);
         doDrawing(g);
         Toolkit.getDefaultToolkit().sync();
@@ -69,7 +98,7 @@ public class Board extends JPanel implements ActionListener {
 
     private void step(){
         player.updateMove();
-        player.move();
+        player.move(this);
         repaint();
     }
 

@@ -2,6 +2,7 @@ package Objects.Character;
 
 import Objects.Map;
 import Objects.Object;
+import Screens.Board;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
@@ -14,7 +15,7 @@ public class Enemy1 extends Object implements Character {
     private int dy = 1;
 
     public Enemy1(int x, int y) {
-        super("character/t/t1/default");
+        super("character/t/t1/default", false);
         this.x = x;
         this.y = y;
         collidable = true;
@@ -27,7 +28,6 @@ public class Enemy1 extends Object implements Character {
 
     @Override
     public void updateMove(){
-
         //turning right
         if (dx == 1 && dy == 0){
             ImageIcon ii = new ImageIcon("./assets/img/res/character/t/t1/turningright.gif");
@@ -52,13 +52,10 @@ public class Enemy1 extends Object implements Character {
             objectImg = ii.getImage();
         }
 
-
-
     }
 
     @Override
-    public boolean checkCollision(int x, int y, int dx, int dy) {
-        Map map = new Map();
+    public boolean checkCollision(int x, int y, int dx, int dy, Map map) {
         // r l u d
 
         for (int i = 0; i < map.objectList.size(); i++){
@@ -68,7 +65,7 @@ public class Enemy1 extends Object implements Character {
             {
                 if (!checkObject.isCollidable())
                 {
-                    System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
+                    //System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
                     return false;
                 }
             }
@@ -76,7 +73,7 @@ public class Enemy1 extends Object implements Character {
                     && checkObject.getX() < x
                     && y + height > checkObject.getY()) {
                 if (!checkObject.isCollidable()){
-                    System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
+                    //System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
                     return false;
                 }
             }
@@ -84,7 +81,7 @@ public class Enemy1 extends Object implements Character {
                     && checkObject.getX() < x + width
                     && checkObject.getY() < y) {
                 if (!checkObject.isCollidable()){
-                    System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
+                    //System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
                     return false;
                 }
             }
@@ -92,7 +89,7 @@ public class Enemy1 extends Object implements Character {
                     && checkObject.getX() < x + width
                     && checkObject.getY() > y) {
                 if (!checkObject.isCollidable()){
-                    System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
+                   // System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
                     return false;
                 }
             }
@@ -101,13 +98,13 @@ public class Enemy1 extends Object implements Character {
     }
 
     @Override
-    public void move() throws InterruptedException {
+    public void move(Board board) throws InterruptedException {
         //move horizontal
         if (movePath == 0){
 
             dy = 0;
             updateMove();
-            if (checkCollision(x, y, dx,0)){
+            if (checkCollision(x, y, dx,0, board.getMap())){
                 x += dx;
                 TimeUnit.MICROSECONDS.sleep(100);
             } else {
@@ -121,7 +118,7 @@ public class Enemy1 extends Object implements Character {
 
             dx = 0;
             updateMove();
-            if (checkCollision(x, y, 0,dy)){
+            if (checkCollision(x, y, 0, dy, board.getMap())){
                 y += dy;
                 TimeUnit.MICROSECONDS.sleep(100);
             } else {

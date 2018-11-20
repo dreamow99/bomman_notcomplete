@@ -43,6 +43,9 @@ public class MapGenerate {
             }
         }
     }
+
+
+
     public int getRow(){ return this.row; }
     public int getCollumn() { return this.collumn; }
 }

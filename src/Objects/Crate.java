@@ -2,7 +2,7 @@ package Objects;
 
 public class Crate extends Object {
     public Crate(int x, int y){
-        super("crate");
+        super("crate", false);
         this.x = x;
         this.y = y;
         collidable = false;

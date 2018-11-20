@@ -1,5 +1,6 @@
 package Objects.Character;
 
+import Objects.Map;
 import Screens.Board;
 
 import java.awt.event.KeyEvent;
@@ -19,12 +20,12 @@ public interface Character {
      * @param dy y velocity
      * @return true/false
      */
-    boolean checkCollision(int x, int y, int dx, int dy);
+    boolean checkCollision(int x, int y, int dx, int dy, Map map);
 
     /**
      * make a move
      */
-    void move() throws InterruptedException;
+    void move(Board board) throws InterruptedException;
 
 
     /**

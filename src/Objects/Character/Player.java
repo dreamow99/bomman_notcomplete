@@ -1,22 +1,26 @@
 package Objects.Character;
 
+import Objects.Bomb;
 import Objects.Map;
 import Objects.Object;
 import Screens.Board;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 public class Player extends Object implements Character {
 
     private int dx;
     private int dy;
 
+    public ArrayList<Bomb> bombs;
+
     // r l u d
     private int direction = 0;
 
     public Player(int x, int y){
-        super("character/ct/default");
+        super("character/ct/default", false);
         this.x = x;
         this.y = y;
         collidable = true;
@@ -24,7 +28,9 @@ public class Player extends Object implements Character {
         visible = true;
         width -= 10;
         height -= 3;
+        bombs = new ArrayList<>();
     }
+
 
     @Override
     public void updateMove() {
@@ -60,8 +66,8 @@ public class Player extends Object implements Character {
 
 
     @Override
-    public boolean checkCollision(int x, int y, int dx, int dy) {
-        Map map = new Map();
+    public boolean checkCollision(int x, int y, int dx, int dy, Map map) {
+
         // r l u d
 
         for (int i = 0; i < map.objectList.size(); i++){
@@ -71,7 +77,7 @@ public class Player extends Object implements Character {
             {
                 if (!checkObject.isCollidable())
                 {
-                    System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
+                    //System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
                     return false;
                 }
             }
@@ -79,7 +85,7 @@ public class Player extends Object implements Character {
                     && checkObject.getX() < x
                     && y + height > checkObject.getY()) {
                 if (!checkObject.isCollidable()){
-                    System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
+                    //System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
                     return false;
                 }
             }
@@ -87,7 +93,7 @@ public class Player extends Object implements Character {
                     && checkObject.getX() < x + width
                     && checkObject.getY() < y) {
                 if (!checkObject.isCollidable()){
-                    System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
+                    //System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
                     return false;
                 }
             }
@@ -95,7 +101,7 @@ public class Player extends Object implements Character {
                     && checkObject.getX() < x + width
                     && checkObject.getY() > y) {
                 if (!checkObject.isCollidable()){
-                    System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
+                    //System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
                     return false;
                 }
             }
@@ -103,12 +109,18 @@ public class Player extends Object implements Character {
         return true;
     }
 
+    private void bombHasBeenPlanted(int x, int y, int range){
+        //System.out.println("plan a bomb");
+
+        bombs.add(new Bomb(x, y, range));
+
+    }
 
     @Override
-    public void move() {
-        if (checkCollision(x, y, dx, dy))
+    public void move(Board board) {
+        if (checkCollision(x, y, dx, dy, board.getMap()))
         {
-            System.out.println(direction);
+            //System.out.println(direction);
             x += dx;
             y += dy;
         }
@@ -138,6 +150,11 @@ public class Player extends Object implements Character {
             dy = 1;
             direction = 4;
         }
+
+        if (key == KeyEvent.VK_SPACE){
+            bombHasBeenPlanted(x, y, 2);
+        }
+
     }
 
     @Override
@@ -163,5 +180,7 @@ public class Player extends Object implements Character {
             dy = 0;
             direction = 0;
         }
+
+
     }
 }

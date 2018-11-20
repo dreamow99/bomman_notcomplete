@@ -15,8 +15,14 @@ public abstract class Object {
     protected int height;
 
 
-    public Object(String name){
-        String imgPath = "./assets/img/res/" + name + ".png";
+    public Object(String name, boolean isGif){
+        String imgPath;
+        if (isGif == false)
+            imgPath = "./assets/img/res/" + name + ".png";
+        else {
+            imgPath = "./assets/img/res/" + name + ".gif";
+        }
+
         ImageIcon ii = new ImageIcon(imgPath);
         objectImg = ii.getImage();
 
@@ -24,6 +30,7 @@ public abstract class Object {
         height = objectImg.getHeight(null);
 
     }
+
     public void setX(int x) {
         this.x = x;
     }
@@ -42,6 +49,8 @@ public abstract class Object {
     public void setCollidable(boolean collidable) {
         this.collidable = collidable;
     }
+
+    public void setVisible(boolean visible) { this.visible = visible; }
 
     public void setDestroyable(boolean destroyable) {
         this.destroyable = destroyable;
