@@ -1,8 +1,10 @@
 package Screens;
 
 
+import Objects.Character.Enemy1;
 import Objects.Character.Player;
 import Objects.Map;
+import Objects.Object;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,9 +33,23 @@ public class Board extends JPanel implements ActionListener {
         this.setFocusable(true);
     }
 
+    public void update() throws InterruptedException{
+        for (int i = 0; i < map.objectList.size(); i++)
+        {
+            Object o = map.objectList.get(i);
+            if (o instanceof Enemy1)
+                ((Enemy1) o).move();
+        }
+        repaint();
+    }
 
     @Override
     protected void paintComponent(Graphics g) {
+        try {
+            update();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         super.paintComponent(g);
         doDrawing(g);
         Toolkit.getDefaultToolkit().sync();
@@ -43,9 +59,8 @@ public class Board extends JPanel implements ActionListener {
         Graphics2D g2d = (Graphics2D) g;
 
         map.draw(g2d, this);
-
-        g2d.drawImage(player.getObjectImg(), player.getX(), player.getY(), this);
     }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -53,7 +68,7 @@ public class Board extends JPanel implements ActionListener {
     }
 
     private void step(){
-        player.updateMove(this);
+        player.updateMove();
         player.move();
         repaint();
     }
@@ -68,7 +83,6 @@ public class Board extends JPanel implements ActionListener {
         @Override
         public void keyPressed(KeyEvent e) {
             player.keyPressed(e);
-
         }
     }
 }

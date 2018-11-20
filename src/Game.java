@@ -5,8 +5,8 @@ import javax.swing.JFrame;
 import java.awt.EventQueue;
 
 public class Game extends JFrame {
-    private final int gameWidth = 600;
-    private final int gameHeight = 400;
+    private final int gameWidth = 1280;
+    private final int gameHeight = 720;
     private final String gameTitle = "Bomberman";
 
     private Game(){
@@ -22,7 +22,8 @@ public class Game extends JFrame {
             setResizable(false);
 
         }
-            public static void main(String[] args){
+
+        public static void main(String[] args){
                 EventQueue.invokeLater( () -> {
             Game ex = new Game();
             ex.setVisible(true);

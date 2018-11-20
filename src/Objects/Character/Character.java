@@ -9,7 +9,7 @@ public interface Character {
     /**
      * update motion when moving
      */
-    void updateMove(Board board);
+    void updateMove();
 
     /**
      * check collision
@@ -24,7 +24,7 @@ public interface Character {
     /**
      * make a move
      */
-    void move();
+    void move() throws InterruptedException;
 
 
     /**

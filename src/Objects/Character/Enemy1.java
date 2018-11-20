@@ -2,21 +2,19 @@ package Objects.Character;
 
 import Objects.Map;
 import Objects.Object;
-import Screens.Board;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
+import java.util.concurrent.TimeUnit;
 
-public class Player extends Object implements Character {
+public class Enemy1 extends Object implements Character {
 
-    private int dx;
-    private int dy;
+    private int movePath;
+    private int dx = 1;
+    private int dy = 1;
 
-    // r l u d
-    private int direction = 0;
-
-    public Player(int x, int y){
-        super("character/ct/default");
+    public Enemy1(int x, int y) {
+        super("character/t/t1/default");
         this.x = x;
         this.y = y;
         collidable = true;
@@ -24,40 +22,39 @@ public class Player extends Object implements Character {
         visible = true;
         width -= 10;
         height -= 3;
+        movePath = (int )(Math.random() * 50 + 1) & 2;
     }
 
     @Override
-    public void updateMove() {
-        if (direction == 0){
-            ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/default.png");
-            this.objectImg = ii.getImage();
-        }
+    public void updateMove(){
 
         //turning right
-        if (direction == 1 ){
-            ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/turningright.gif");
+        if (dx == 1 && dy == 0){
+            ImageIcon ii = new ImageIcon("./assets/img/res/character/t/t1/turningright.gif");
             objectImg = ii.getImage();
         }
 
         //turning left
-        if (direction == 2 ){
-            ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/turningleft.gif");
+        if (dx == -1 && dy == 0){
+            ImageIcon ii = new ImageIcon("./assets/img/res/character/t/t1/turningleft.gif");
             objectImg = ii.getImage();
         }
 
         //going up
-        if (direction == 3 ){
-            ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/goingup.gif");
+        if (dy == -1 && dx == 0){
+            ImageIcon ii = new ImageIcon("./assets/img/res/character/t/t1/goingup.gif");
             objectImg = ii.getImage();
         }
 
         // going down
-        if (direction == 4 ){
-            ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/goingdown.gif");
+        if (dy == 1 && dx == 0){
+            ImageIcon ii = new ImageIcon("./assets/img/res/character/t/t1/goingdown.gif");
             objectImg = ii.getImage();
         }
-    }
 
+
+
+    }
 
     @Override
     public boolean checkCollision(int x, int y, int dx, int dy) {
@@ -103,65 +100,45 @@ public class Player extends Object implements Character {
         return true;
     }
 
-
     @Override
-    public void move() {
-        if (checkCollision(x, y, dx, dy))
-        {
-            System.out.println(direction);
-            x += dx;
-            y += dy;
-        }
-    }
+    public void move() throws InterruptedException {
+        //move horizontal
+        if (movePath == 0){
 
+            dy = 0;
+            updateMove();
+            if (checkCollision(x, y, dx,0)){
+                x += dx;
+                TimeUnit.MICROSECONDS.sleep(100);
+            } else {
+                if (dx == 1) dx = -1;
+                else if (dx == -1) dx = 1;
+            }
+        }
+
+        //move vertical
+        else{
+
+            dx = 0;
+            updateMove();
+            if (checkCollision(x, y, 0,dy)){
+                y += dy;
+                TimeUnit.MICROSECONDS.sleep(100);
+            } else {
+                if (dy == 1) dy = -1;
+                else if (dy == -1) dy = 1;
+            }
+        }
+
+    }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        int key = e.getKeyCode();
 
-        if (key == KeyEvent.VK_RIGHT) {
-            dx = 1;
-            direction = 1;
-        }
-
-        if (key == KeyEvent.VK_LEFT) {
-            dx = -1;
-            direction = 2;
-        }
-
-        if (key == KeyEvent.VK_UP) {
-            dy = -1;
-            direction = 3;
-        }
-
-        if (key == KeyEvent.VK_DOWN) {
-            dy = 1;
-            direction = 4;
-        }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        int key = e.getKeyCode();
 
-        if (key == KeyEvent.VK_LEFT) {
-            dx = 0;
-            direction = 0;
-        }
-
-        if (key == KeyEvent.VK_RIGHT) {
-            dx = 0;
-            direction = 0;
-        }
-
-        if (key == KeyEvent.VK_UP) {
-            dy = 0;
-            direction = 0;
-        }
-
-        if (key == KeyEvent.VK_DOWN) {
-            dy = 0;
-            direction = 0;
-        }
     }
 }
