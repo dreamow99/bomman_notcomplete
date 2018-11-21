@@ -11,8 +11,15 @@ import java.util.ArrayList;
 
 public class Player extends Object implements Character {
 
-    private int dx;
-    private int dy;
+    private int dx = 0;
+    private int dy = 0;
+    private boolean canMoveLeft = true;
+    private boolean canMoveRight = true;
+    private boolean canMoveUp = true;
+    private boolean canMoveDown = true;
+
+    private int bombSlot = 1;
+
 
     public ArrayList<Bomb> bombs;
 
@@ -31,42 +38,48 @@ public class Player extends Object implements Character {
         bombs = new ArrayList<>();
     }
 
+    public void addBombSlot(){
+        bombSlot++;
+    }
+
 
     @Override
     public void updateMove() {
-        if (direction == 0){
+
+        if (dx == 0 && dy == 0){
             ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/default.png");
             this.objectImg = ii.getImage();
         }
 
-        //turning right
-        if (direction == 1 ){
-            ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/turningright.gif");
-            objectImg = ii.getImage();
-        }
-
-        //turning left
-        if (direction == 2 ){
-            ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/turningleft.gif");
-            objectImg = ii.getImage();
-        }
-
         //going up
-        if (direction == 3 ){
+        if (dy == -2){
             ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/goingup.gif");
             objectImg = ii.getImage();
         }
 
         // going down
-        if (direction == 4 ){
+        if (dy == 2){
             ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/goingdown.gif");
+            objectImg = ii.getImage();
+        }
+
+
+        //turning right
+        if (dx == 2){
+            ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/turningright.gif");
+            objectImg = ii.getImage();
+        }
+
+        //turning left
+        if (dx == -2){
+            ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/turningleft.gif");
             objectImg = ii.getImage();
         }
     }
 
 
     @Override
-    public boolean checkCollision(int x, int y, int dx, int dy, Map map) {
+    public void checkCollision(int x, int y, int dx, int dy, Map map) {
 
         // r l u d
 
@@ -78,7 +91,7 @@ public class Player extends Object implements Character {
                 if (!checkObject.isCollidable())
                 {
                     //System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
-                    return false;
+                    canMoveRight = false;
                 }
             }
             if (y < checkObject.getY() + checkObject.getHeight() && x + dx < checkObject.getX() + checkObject.getWidth()
@@ -86,7 +99,7 @@ public class Player extends Object implements Character {
                     && y + height > checkObject.getY()) {
                 if (!checkObject.isCollidable()){
                     //System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
-                    return false;
+                    canMoveLeft = false;
                 }
             }
             if (y + dy < checkObject.getY() + checkObject.getHeight() && x < checkObject.getX() + checkObject.getWidth()
@@ -94,7 +107,7 @@ public class Player extends Object implements Character {
                     && checkObject.getY() < y) {
                 if (!checkObject.isCollidable()){
                     //System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
-                    return false;
+                    canMoveUp = false;
                 }
             }
             if (y + dy + height > checkObject.getY() && x < checkObject.getX() + checkObject.getWidth()
@@ -102,27 +115,90 @@ public class Player extends Object implements Character {
                     && checkObject.getY() > y) {
                 if (!checkObject.isCollidable()){
                     //System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
-                    return false;
+                    canMoveDown = false;
                 }
             }
         }
-        return true;
+    }
+
+    private boolean canPlantBomb(int bombX, int bombY){
+        int count = 0;
+        for (Bomb i : bombs){
+            if (bombX == i.getX() && bombY == i.getY()) return false;
+            if (!i.timeout) count++;
+        }
+        return count < bombSlot;
     }
 
     private void bombHasBeenPlanted(int x, int y, int range){
-        //System.out.println("plan a bomb");
+        int bombX, bombY;
+        if (direction == 0 || direction == 1 || direction == 4){
+            bombX =36 * (x / 36);
+            bombY = 36 * (y / 36);
+        }
+        else {
+            bombX = 36 * ((x + width)/36);
+            bombY = 36 * ((y + height)/36);
+        }
 
-        bombs.add(new Bomb(x, y, range));
-
+        if (canPlantBomb(bombX, bombY)){
+            bombs.add(new Bomb(bombX, bombY, range));
+        }
     }
 
     @Override
     public void move(Board board) {
-        if (checkCollision(x, y, dx, dy, board.getMap()))
+        checkCollision(x, y, dx, dy, board.getMap());
+        if (canMoveLeft && canMoveRight && canMoveUp && canMoveDown)
         {
-            //System.out.println(direction);
-            x += dx;
+            x+=dx;
+            y+=dy;
+        }
+        else if (!canMoveUp && !canMoveLeft)
+        {
+            canMoveLeft = true;
+            canMoveUp = true;
+        }
+        else if (!canMoveUp && !canMoveRight)
+        {
+            canMoveRight = true;
+            canMoveUp = true;
+        }
+        else if (!canMoveDown && !canMoveLeft)
+        {
+            canMoveDown = true;
+            canMoveLeft = true;
+        }
+        else if (!canMoveDown && !canMoveRight)
+        {
+            canMoveRight = true;
+            canMoveDown = true;
+        }
+        else if (!canMoveLeft || !canMoveRight)
+        {
             y += dy;
+            x += 0.1;
+            if (!canMoveRight)
+            {
+                canMoveRight = true;
+            }
+            else
+            {
+                canMoveLeft = true;
+            }
+        }
+        else if (!canMoveUp || !canMoveDown)
+        {
+            x += dx;
+            y += 0.1;
+            if (!canMoveUp)
+            {
+                canMoveUp = true;
+            }
+            else
+            {
+                canMoveDown = true;
+            }
         }
     }
 
@@ -132,23 +208,27 @@ public class Player extends Object implements Character {
         int key = e.getKeyCode();
 
         if (key == KeyEvent.VK_RIGHT) {
-            dx = 1;
+            dx = 2;
             direction = 1;
+            updateMove();
         }
 
         if (key == KeyEvent.VK_LEFT) {
-            dx = -1;
+            dx = -2;
             direction = 2;
+            updateMove();
         }
 
         if (key == KeyEvent.VK_UP) {
-            dy = -1;
+            dy = -2;
             direction = 3;
+            updateMove();
         }
 
         if (key == KeyEvent.VK_DOWN) {
-            dy = 1;
+            dy = 2;
             direction = 4;
+            updateMove();
         }
 
         if (key == KeyEvent.VK_SPACE){
@@ -163,24 +243,22 @@ public class Player extends Object implements Character {
 
         if (key == KeyEvent.VK_LEFT) {
             dx = 0;
-            direction = 0;
+            updateMove();
         }
 
         if (key == KeyEvent.VK_RIGHT) {
             dx = 0;
-            direction = 0;
+            updateMove();
         }
 
         if (key == KeyEvent.VK_UP) {
             dy = 0;
-            direction = 0;
+            updateMove();
         }
 
         if (key == KeyEvent.VK_DOWN) {
             dy = 0;
-            direction = 0;
+            updateMove();
         }
-
-
     }
 }

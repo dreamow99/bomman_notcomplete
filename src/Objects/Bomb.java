@@ -5,6 +5,7 @@ public class Bomb extends Object {
     private int range;
     private long time;
     public boolean timeout;
+    private int existTime = 3;
 
 
     public Bomb(int x, int y, int range){
@@ -18,19 +19,17 @@ public class Bomb extends Object {
 
     private void run(int playerX, int playerY, int playerW, int playerH){
         if (playerX > x + width || playerY > y + height || playerX + playerW < x || playerY + playerH < y){
-            //System.out.println(x + " " + y + " " + playerX + " " + playerY);
             collidable = false;
         }
 
     }
 
     private void boom(){
-        System.out.println("time out");
         timeout = true;
     }
 
     public void live(int playerX, int playerY, int playerW, int playerH){
-        if ((System.currentTimeMillis() - time)/1000F < 3)
+        if ((System.currentTimeMillis() - time)/1000F < existTime)
             run(playerX, playerY, playerW, playerH);
 
         else {

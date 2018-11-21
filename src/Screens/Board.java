@@ -97,7 +97,7 @@ public class Board extends JPanel implements ActionListener {
     }
 
     private void step(){
-        player.updateMove();
+        //player.updateMove();
         player.move(this);
         repaint();
     }

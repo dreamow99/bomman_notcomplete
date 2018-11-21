@@ -20,7 +20,7 @@ public interface Character {
      * @param dy y velocity
      * @return true/false
      */
-    boolean checkCollision(int x, int y, int dx, int dy, Map map);
+    void checkCollision(int x, int y, int dx, int dy, Map map);
 
     /**
      * make a move
