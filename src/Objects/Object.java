@@ -17,7 +17,7 @@ public abstract class Object {
 
     public Object(String name, boolean isGif){
         String imgPath;
-        if (isGif == false)
+        if (!isGif)
             imgPath = "./assets/img/res/" + name + ".png";
         else {
             imgPath = "./assets/img/res/" + name + ".gif";

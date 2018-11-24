@@ -13,8 +13,8 @@ public class Map {
     public ArrayList<Object> objectList;
     private MapGenerate mapGenerator;
 
-    public Map() {
-        mapGenerator = new MapGenerate(this);
+    public Map(Board board) {
+        mapGenerator = new MapGenerate(this, board);
     }
 
 

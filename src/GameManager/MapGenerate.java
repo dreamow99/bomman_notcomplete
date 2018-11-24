@@ -4,6 +4,7 @@ import Objects.*;
 import Objects.Character.Enemy1;
 import Objects.Character.Player;
 import Objects.Object;
+import Screens.Board;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,7 +16,7 @@ public class MapGenerate {
     private int row;
     private int collumn;
 
-    public MapGenerate(Map map){
+    public MapGenerate(Map map, Board board){
         File inFile = new File("./assets/map/map.txt");
         Scanner sc = null;
         try {
@@ -37,8 +38,8 @@ public class MapGenerate {
                 if (c == '#')  map.add(new FixedWall(j*36, (i-2)*36));
                 else if (c == '*') map.add(new Crate(j*36, (i-2)*36));
                 else if (c == 'x') {map.add(new Portal(j*36, (i-2)*36)); map.add(new Crate(j*36, (i-2)*36));}
-                else if (c == 'p') map.add(new Player(j*36, (i-2)*36));
-                else if (c == '1') map.add(new Enemy1(j*36, (i-2)*36));
+                else if (c == 'p') map.add(new Player(j*36, (i-2)*36, board));
+                else if (c == '1') map.add(new Enemy1(j*36 , (i-2)*36));
 
             }
         }

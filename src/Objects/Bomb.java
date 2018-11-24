@@ -1,5 +1,7 @@
 package Objects;
 
+import Screens.Board;
+
 public class Bomb extends Object {
 
     private int range;
@@ -21,19 +23,20 @@ public class Bomb extends Object {
         if (playerX > x + width || playerY > y + height || playerX + playerW < x || playerY + playerH < y){
             collidable = false;
         }
-
     }
 
-    private void boom(){
+    private void boom(Board board){
         timeout = true;
+
+        Fire fire = new Fire (x, y, range, board);
+        board.addToMap(fire);
     }
 
-    public void live(int playerX, int playerY, int playerW, int playerH){
+    public void live(int playerX, int playerY, int playerW, int playerH, Board board){
         if ((System.currentTimeMillis() - time)/1000F < existTime)
             run(playerX, playerY, playerW, playerH);
-
         else {
-            boom();
+            boom(board);
         }
     }
 }

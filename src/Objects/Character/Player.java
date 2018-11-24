@@ -18,7 +18,9 @@ public class Player extends Object implements Character {
     private boolean canMoveUp = true;
     private boolean canMoveDown = true;
 
+    private int bombRange = 2;
     private int bombSlot = 1;
+    private Board board;
 
 
     public ArrayList<Bomb> bombs;
@@ -26,7 +28,7 @@ public class Player extends Object implements Character {
     // r l u d
     private int direction = 0;
 
-    public Player(int x, int y){
+    public Player(int x, int y, Board board){
         super("character/ct/default", false);
         this.x = x;
         this.y = y;
@@ -36,6 +38,7 @@ public class Player extends Object implements Character {
         width -= 10;
         height -= 3;
         bombs = new ArrayList<>();
+        this.board = board;
     }
 
     public void addBombSlot(){
@@ -52,31 +55,35 @@ public class Player extends Object implements Character {
         }
 
         //going up
-        if (dy == -2){
+        if (dy == -1){
             ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/goingup.gif");
             objectImg = ii.getImage();
         }
 
         // going down
-        if (dy == 2){
+        if (dy == 1){
             ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/goingdown.gif");
             objectImg = ii.getImage();
         }
 
 
         //turning right
-        if (dx == 2){
+        if (dx == 1){
             ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/turningright.gif");
             objectImg = ii.getImage();
         }
 
         //turning left
-        if (dx == -2){
+        if (dx == -1){
             ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/turningleft.gif");
             objectImg = ii.getImage();
         }
     }
 
+    @Override
+    public boolean preCheckCollision(int x, int y, int dx, int dy, Map map) {
+        return false;
+    }
 
     @Override
     public void checkCollision(int x, int y, int dx, int dy, Map map) {
@@ -90,7 +97,6 @@ public class Player extends Object implements Character {
             {
                 if (!checkObject.isCollidable())
                 {
-                    //System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
                     canMoveRight = false;
                 }
             }
@@ -98,7 +104,6 @@ public class Player extends Object implements Character {
                     && checkObject.getX() < x
                     && y + height > checkObject.getY()) {
                 if (!checkObject.isCollidable()){
-                    //System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
                     canMoveLeft = false;
                 }
             }
@@ -106,7 +111,6 @@ public class Player extends Object implements Character {
                     && checkObject.getX() < x + width
                     && checkObject.getY() < y) {
                 if (!checkObject.isCollidable()){
-                    //System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
                     canMoveUp = false;
                 }
             }
@@ -114,7 +118,6 @@ public class Player extends Object implements Character {
                     && checkObject.getX() < x + width
                     && checkObject.getY() > y) {
                 if (!checkObject.isCollidable()){
-                    //System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
                     canMoveDown = false;
                 }
             }
@@ -127,24 +130,24 @@ public class Player extends Object implements Character {
             if (bombX == i.getX() && bombY == i.getY()) return false;
             if (!i.timeout) count++;
         }
+        for (Object o : board.getMap().objectList){
+            if (bombX == o.getX() && bombY == o.getY() && !o.isCollidable()) return false;
+        }
         return count < bombSlot;
     }
 
     private void bombHasBeenPlanted(int x, int y, int range){
+        x += width/2;
+        y += height/2;
         int bombX, bombY;
-        if (direction == 0 || direction == 1 || direction == 4){
-            bombX =36 * (x / 36);
-            bombY = 36 * (y / 36);
-        }
-        else {
-            bombX = 36 * ((x + width)/36);
-            bombY = 36 * ((y + height)/36);
-        }
+        bombX =36 * (x / 36);
+        bombY = 36 * (y / 36);
 
         if (canPlantBomb(bombX, bombY)){
             bombs.add(new Bomb(bombX, bombY, range));
         }
     }
+
 
     @Override
     public void move(Board board) {
@@ -208,31 +211,31 @@ public class Player extends Object implements Character {
         int key = e.getKeyCode();
 
         if (key == KeyEvent.VK_RIGHT) {
-            dx = 2;
+            dx = 1;
             direction = 1;
             updateMove();
         }
 
         if (key == KeyEvent.VK_LEFT) {
-            dx = -2;
+            dx = -1;
             direction = 2;
             updateMove();
         }
 
         if (key == KeyEvent.VK_UP) {
-            dy = -2;
+            dy = -1;
             direction = 3;
             updateMove();
         }
 
         if (key == KeyEvent.VK_DOWN) {
-            dy = 2;
+            dy = 1;
             direction = 4;
             updateMove();
         }
 
         if (key == KeyEvent.VK_SPACE){
-            bombHasBeenPlanted(x, y, 2);
+            bombHasBeenPlanted(x, y, bombRange);
         }
 
     }

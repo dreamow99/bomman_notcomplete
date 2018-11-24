@@ -18,9 +18,11 @@ public interface Character {
      * @param y y coordinate
      * @param dx x velocity
      * @param dy y velocity
-     * @return true/false
      */
     void checkCollision(int x, int y, int dx, int dy, Map map);
+
+
+    boolean preCheckCollision(int x, int y, int dx, int dy, Map map);
 
     /**
      * make a move

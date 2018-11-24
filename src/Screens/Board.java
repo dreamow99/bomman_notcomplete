@@ -4,6 +4,7 @@ package Screens;
 import Objects.Bomb;
 import Objects.Character.Enemy1;
 import Objects.Character.Player;
+import Objects.Fire;
 import Objects.Map;
 import Objects.Object;
 
@@ -27,7 +28,7 @@ public class Board extends JPanel implements ActionListener {
 
     private void initBoard(){
         addKeyListener(new TAdapter());
-        map = new Map();
+        map = new Map(this);
         timer = new Timer(delay, this);
         timer.start();
         player = map.getPlayer();
@@ -43,11 +44,7 @@ public class Board extends JPanel implements ActionListener {
         {
             Object o = map.objectList.get(i);
             if (o instanceof Enemy1)
-                try{
                     ((Enemy1) o).move(this);
-                } catch (InterruptedException e){
-                    e.printStackTrace();
-                }
         }
 
         for (int i = 0; i < map.objectList.size(); i++)
@@ -67,13 +64,37 @@ public class Board extends JPanel implements ActionListener {
                 if (b.timeout){
                     continue;
                 }
-                b.live(player.getX(), player.getY(), player.getWidth(), player.getHeight());
+                b.live(player.getX(), player.getY(), player.getWidth(), player.getHeight(), this);
                 map.add(b);
             }
         }
 
+        for (int i = 0; i < map.objectList.size(); i++)
+        {
+            Object o = map.objectList.get(i);
+            if (o instanceof Fire){
+                if (!((Fire) o).isActive)continue;
+                ((Fire) o).live();
+            }
+        }
+
+        for (int i = 0; i < map.objectList.size(); i++)
+        {
+            Object o = map.objectList.get(i);
+            if (o instanceof Fire){
+                if (!((Fire) o).isActive) map.objectList.remove(o);
+            }
+        }
 
         repaint();
+    }
+
+    public void addToMap(Object o){
+        map.add(o);
+    }
+
+    public void deleteObject(Object o){
+        map.objectList.remove(o);
     }
 
     @Override
