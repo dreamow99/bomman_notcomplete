@@ -29,6 +29,10 @@ public interface Character {
      */
     void move(Board board) throws InterruptedException;
 
+    /**
+     * check isAlive
+     */
+    void update();
 
     /**
      * handle key pressed

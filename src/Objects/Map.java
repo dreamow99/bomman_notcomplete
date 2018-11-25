@@ -56,12 +56,4 @@ public class Map {
         }
     }
 
-    public Player getPlayer(){
-        Player p = null;
-        for (int i = 0; i < objectList.size(); i++) {
-            Object o = objectList.get(i);
-            if (o instanceof Player) p = (Player)o;
-        }
-        return p;
-    }
 }

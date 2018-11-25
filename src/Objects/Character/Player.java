@@ -1,6 +1,7 @@
 package Objects.Character;
 
 import Objects.Bomb;
+import Objects.Fire;
 import Objects.Map;
 import Objects.Object;
 import Screens.Board;
@@ -18,6 +19,7 @@ public class Player extends Object implements Character {
     private boolean canMoveUp = true;
     private boolean canMoveDown = true;
 
+    public int isAlive; // 0 - no; 1 - yes
     private int bombRange = 2;
     private int bombSlot = 1;
     private Board board;
@@ -32,6 +34,7 @@ public class Player extends Object implements Character {
         super("character/ct/default", false);
         this.x = x;
         this.y = y;
+        isAlive = 1;
         collidable = true;
         destroyable = true;
         visible = true;
@@ -55,26 +58,26 @@ public class Player extends Object implements Character {
         }
 
         //going up
-        if (dy == -1){
+        if (dy == -2){
             ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/goingup.gif");
             objectImg = ii.getImage();
         }
 
         // going down
-        if (dy == 1){
+        if (dy == 2){
             ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/goingdown.gif");
             objectImg = ii.getImage();
         }
 
 
         //turning right
-        if (dx == 1){
+        if (dx == 2){
             ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/turningright.gif");
             objectImg = ii.getImage();
         }
 
         //turning left
-        if (dx == -1){
+        if (dx == -2){
             ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/turningleft.gif");
             objectImg = ii.getImage();
         }
@@ -205,31 +208,79 @@ public class Player extends Object implements Character {
         }
     }
 
+    // TO DO: Check hoi ngao
+    private boolean fireOrEnemy(int x, int y, Map map){
+        for (int i = 0; i < map.objectList.size(); i++){
+            Object checkObject = map.objectList.get(i);
+            if (checkObject instanceof Fire || checkObject instanceof Enemy1){
+                if (x == checkObject.getX() && y == checkObject.getY())
+                    return true;
+                if (y < checkObject.getY() + checkObject.getHeight() && x + width > checkObject.getX() && checkObject.getX() > x
+                        && y + height > checkObject.getY())
+                    return true;
+                if (y < checkObject.getY() + checkObject.getHeight() && x  < checkObject.getX() + checkObject.getWidth()
+                        && checkObject.getX() < x
+                        && y + height > checkObject.getY())
+                    return true;
+                if (y  < checkObject.getY() + checkObject.getHeight() && x < checkObject.getX() + checkObject.getWidth()
+                        && checkObject.getX() < x + width
+                        && checkObject.getY() < y)
+                    return true;
+                if (y + height > checkObject.getY() && x < checkObject.getX() + checkObject.getWidth()
+                        && checkObject.getX() < x + width
+                        && checkObject.getY() > y)
+                    return true;
+            }
+        }
+        return false;
+    }
+
+
+    @Override
+    public void update() {
+        if (isAlive == 1){
+            if (fireOrEnemy(x, y, board.getMap())){
+                 isAlive = 2;
+            }
+        }
+
+        if (isAlive == 2){
+            ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/dying.png");
+            this.objectImg = ii.getImage();
+        }
+        /*if (isAlive == 2){
+            boolean noFireLeft = true;
+            for (Object o : board.getMap().objectList){
+                if (o instanceof Fire) noFireLeft = false;
+            }
+            if (noFireLeft) isAlive = 0;
+        }*/
+    }
 
     @Override
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
 
         if (key == KeyEvent.VK_RIGHT) {
-            dx = 1;
+            dx = 2;
             direction = 1;
             updateMove();
         }
 
         if (key == KeyEvent.VK_LEFT) {
-            dx = -1;
+            dx = -2;
             direction = 2;
             updateMove();
         }
 
         if (key == KeyEvent.VK_UP) {
-            dy = -1;
+            dy = -2;
             direction = 3;
             updateMove();
         }
 
         if (key == KeyEvent.VK_DOWN) {
-            dy = 1;
+            dy = 2;
             direction = 4;
             updateMove();
         }

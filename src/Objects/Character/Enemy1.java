@@ -1,5 +1,6 @@
 package Objects.Character;
 
+import Objects.Fire;
 import Objects.Map;
 import Objects.Object;
 import Screens.Board;
@@ -12,17 +13,22 @@ public class Enemy1 extends Object implements Character {
 
     private int dx = 0;
     private int dy = 0;
+    private Board board;
+
+    public int isAlive; // 0 - no; 1 - yes; 2 - dying
 
     // r l u d 1 2 3 4
     private int direction = 0;
 
-    public Enemy1(int x, int y) {
+    public Enemy1(int x, int y, Board board) {
         super("character/t/t1/default", false);
         this.x = x;
         this.y = y;
+        this.board = board;
         collidable = true;
         destroyable = true;
         visible = true;
+        isAlive = 1;
     }
 
     @Override
@@ -101,6 +107,11 @@ public class Enemy1 extends Object implements Character {
 
     @Override
     public void move(Board board) {
+        if (isAlive == 2){
+            dx = 0;
+            dy = 0;
+            return;
+        }
 
         boolean canMoveUp = preCheckCollision(x, y, 0, -1, board.getMap());
         boolean canMoveDown = preCheckCollision(x, y, 0, 1, board.getMap());
@@ -497,8 +508,54 @@ public class Enemy1 extends Object implements Character {
         updateMove();
         y += dy;
         x += dx;
+
     }
 
+    // TO DO: Check hoi ngao
+    private boolean catchFire(int x, int y, Map map){
+        for (int i = 0; i < map.objectList.size(); i++){
+            Object checkObject = map.objectList.get(i);
+            if (checkObject instanceof Fire){
+                if (x == checkObject.getX() && y == checkObject.getY())
+                    return true;
+                if (y < checkObject.getY() + checkObject.getHeight() && x + width > checkObject.getX() && checkObject.getX() > x
+                        && y + height > checkObject.getY())
+                    return true;
+                if (y < checkObject.getY() + checkObject.getHeight() && x  < checkObject.getX() + checkObject.getWidth()
+                        && checkObject.getX() < x
+                        && y + height > checkObject.getY())
+                    return true;
+                if (y  < checkObject.getY() + checkObject.getHeight() && x < checkObject.getX() + checkObject.getWidth()
+                        && checkObject.getX() < x + width
+                        && checkObject.getY() < y)
+                    return true;
+                if (y + height > checkObject.getY() && x < checkObject.getX() + checkObject.getWidth()
+                        && checkObject.getX() < x + width
+                        && checkObject.getY() > y)
+                    return true;
+            }
+        }
+        return false;
+    }
+
+
+    @Override
+    public void update() {
+        if (isAlive == 1){
+            if (catchFire(x, y, board.getMap())){
+                isAlive = 2;
+            }
+        }
+        if (isAlive == 2){
+            ImageIcon ii = new ImageIcon("./assets/img/res/character/t/t1/dying.png");
+            this.objectImg = ii.getImage();
+            boolean noFireLeft = true;
+            for (Object o : board.getMap().objectList){
+                if (o instanceof Fire) noFireLeft = false;
+            }
+            if (noFireLeft) isAlive = 0;
+        }
+    }
 
     @Override
     public void keyPressed(KeyEvent e) {

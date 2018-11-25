@@ -9,7 +9,7 @@ public class Fire extends Object{
     public boolean isActive;
     private long time;
 
-    public Fire(int x, int y, int range, Board board){
+    Fire(int x, int y, int range, Board board){
         super("/bombs/fire-center", false);
         this.x = x;
         this.y = y;
@@ -45,7 +45,7 @@ public class Fire extends Object{
             curY += 36;
             if (checkCollision(curX, curY, board.getMap()) == 0) break;
             if (checkCollision(curX, curY, board.getMap()) == 1) {
-                board.addToMap(new Fire("vertical", curX, curY, 1, board));
+                board.addToMap(new Fire(" ", curX, curY, 1, board));
                 break;
             }
             if (i != range - 1)
@@ -60,7 +60,7 @@ public class Fire extends Object{
             curY -= 36;
             if (checkCollision(curX, curY, board.getMap()) == 0) break;
             if (checkCollision(curX, curY, board.getMap()) == 1) {
-                board.addToMap(new Fire("vertical", curX, curY, 1, board));
+                board.addToMap(new Fire(" ", curX, curY, 1, board));
                 break;
             }
             if (i != range - 1)
@@ -75,7 +75,7 @@ public class Fire extends Object{
             curX += 36;
             if (checkCollision(curX, curY, board.getMap()) == 0) break;
             if (checkCollision(curX, curY, board.getMap()) == 1) {
-                board.addToMap(new Fire("horizontal", curX, curY, 1, board));
+                board.addToMap(new Fire(" ", curX, curY, 1, board));
                 break;
             }
             if (i != range - 1)
@@ -90,7 +90,7 @@ public class Fire extends Object{
             curX -= 36;
             if (checkCollision(curX, curY, board.getMap()) == 0) break;
             if (checkCollision(curX, curY, board.getMap()) == 1) {
-                board.addToMap(new Fire("horizontal", curX, curY, 1, board));
+                board.addToMap(new Fire(" ", curX, curY, 1, board));
                 break;
             }
             if (i != range - 1)
@@ -104,7 +104,7 @@ public class Fire extends Object{
         for (Object o : map.objectList){
             if (o instanceof Portal) continue;
             if (o.getX() == x && o.getY() == y && !o.isDestroyable() && !(o instanceof Fire)){
-                System.out.println(x + " " + y + " " + o.toString());
+                //System.out.println(x + " " + y + " " + o.toString());
                 return 0;
             }
             if (o.getX() == x && o.getY() == y && o.isDestroyable() && !o.isCollidable() && !(o instanceof Fire))

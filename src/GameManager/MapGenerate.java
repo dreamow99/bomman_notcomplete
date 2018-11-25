@@ -39,7 +39,7 @@ public class MapGenerate {
                 else if (c == '*') map.add(new Crate(j*36, (i-2)*36));
                 else if (c == 'x') {map.add(new Portal(j*36, (i-2)*36)); map.add(new Crate(j*36, (i-2)*36));}
                 else if (c == 'p') map.add(new Player(j*36, (i-2)*36, board));
-                else if (c == '1') map.add(new Enemy1(j*36 , (i-2)*36));
+                else if (c == '1') map.add(new Enemy1(j*36 , (i-2)*36, board));
 
             }
         }

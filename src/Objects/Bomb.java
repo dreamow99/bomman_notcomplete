@@ -7,7 +7,6 @@ public class Bomb extends Object {
     private int range;
     private long time;
     public boolean timeout;
-    private int existTime = 3;
 
 
     public Bomb(int x, int y, int range){
@@ -33,6 +32,7 @@ public class Bomb extends Object {
     }
 
     public void live(int playerX, int playerY, int playerW, int playerH, Board board){
+        int existTime = 3;
         if ((System.currentTimeMillis() - time)/1000F < existTime)
             run(playerX, playerY, playerW, playerH);
         else {

@@ -1,11 +1,9 @@
 package Screens;
 
 
-import Objects.Bomb;
+import Objects.*;
 import Objects.Character.Enemy1;
 import Objects.Character.Player;
-import Objects.Fire;
-import Objects.Map;
 import Objects.Object;
 
 import javax.swing.*;
@@ -31,20 +29,36 @@ public class Board extends JPanel implements ActionListener {
         map = new Map(this);
         timer = new Timer(delay, this);
         timer.start();
-        player = map.getPlayer();
         this.setFocusable(true);
+        initPlayer();
     }
 
     public Map getMap() {
         return map;
     }
 
+    private void initPlayer(){
+        for (Object o : map.objectList){
+            if (o instanceof Player)
+                player = (Player) o;
+        }
+    }
+
     public void update(Graphics g) {
+        if (player.isAlive == 0){
+            //TO DO : lam game over
+        }
         for (int i = 0; i < map.objectList.size(); i++)
         {
             Object o = map.objectList.get(i);
             if (o instanceof Enemy1)
-                    ((Enemy1) o).move(this);
+                ((Enemy1) o).move(this);
+            if (o instanceof Crate)
+                ((Crate) o).update(this);
+            if (o instanceof Player)
+                ((Player) o).update();
+            if (o instanceof Enemy1)
+                ((Enemy1) o).update();
         }
 
         for (int i = 0; i < map.objectList.size(); i++)
@@ -56,6 +70,14 @@ public class Board extends JPanel implements ActionListener {
                     player.bombs.remove(b);
                     map.objectList.remove(b);
                 }
+            }
+            if (o instanceof Crate){
+                if (((Crate) o).isDestroyed == 1 && (System.currentTimeMillis() - ((Crate) o).countTime)/1000F >= 0.5)
+                    map.objectList.remove(o);
+            }
+            if (o instanceof Enemy1){
+                if(((Enemy1) o).isAlive == 0)
+                    map.objectList.remove(o);
             }
         }
 
@@ -85,6 +107,7 @@ public class Board extends JPanel implements ActionListener {
                 if (!((Fire) o).isActive) map.objectList.remove(o);
             }
         }
+
 
         repaint();
     }
