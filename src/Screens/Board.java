@@ -59,6 +59,12 @@ public class Board extends JPanel implements ActionListener {
                 ((Player) o).update();
             if (o instanceof Enemy1)
                 ((Enemy1) o).update();
+            if (o instanceof SpeedItem)
+                ((SpeedItem) o).update(this);
+            if (o instanceof BombItem)
+                ((BombItem) o).update(this);
+            if (o instanceof FlameItem)
+                ((FlameItem) o).update(this);
         }
 
         for (int i = 0; i < map.objectList.size(); i++)
@@ -77,6 +83,18 @@ public class Board extends JPanel implements ActionListener {
             }
             if (o instanceof Enemy1){
                 if(((Enemy1) o).isAlive == 0)
+                    map.objectList.remove(o);
+            }
+            if (o instanceof SpeedItem){
+                if (!((SpeedItem) o).existence)
+                    map.objectList.remove(o);
+            }
+            if (o instanceof BombItem){
+                if (!((BombItem) o).existence)
+                    map.objectList.remove(o);
+            }
+            if (o instanceof FlameItem){
+                if (!((FlameItem) o).existence)
                     map.objectList.remove(o);
             }
         }

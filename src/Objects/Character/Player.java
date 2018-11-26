@@ -1,8 +1,6 @@
 package Objects.Character;
 
-import Objects.Bomb;
-import Objects.Fire;
-import Objects.Map;
+import Objects.*;
 import Objects.Object;
 import Screens.Board;
 
@@ -20,15 +18,13 @@ public class Player extends Object implements Character {
     private boolean canMoveDown = true;
 
     public int isAlive; // 0 - no; 1 - yes
-    private int bombRange = 2;
+    private int bombRange = 1;
     private int bombSlot = 1;
+    private int velocity = 1;
     private Board board;
 
 
     public ArrayList<Bomb> bombs;
-
-    // r l u d
-    private int direction = 0;
 
     public Player(int x, int y, Board board){
         super("character/ct/default", false);
@@ -48,6 +44,9 @@ public class Player extends Object implements Character {
         bombSlot++;
     }
 
+    public void increaseBombRange() { bombRange++; }
+
+    public void speedUp() { velocity = (velocity + 1)%3 + 1; }
 
     @Override
     public void updateMove() {
@@ -58,26 +57,26 @@ public class Player extends Object implements Character {
         }
 
         //going up
-        if (dy == -2){
+        if (dy == -velocity){
             ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/goingup.gif");
             objectImg = ii.getImage();
         }
 
         // going down
-        if (dy == 2){
+        if (dy == velocity){
             ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/goingdown.gif");
             objectImg = ii.getImage();
         }
 
 
         //turning right
-        if (dx == 2){
+        if (dx == velocity){
             ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/turningright.gif");
             objectImg = ii.getImage();
         }
 
         //turning left
-        if (dx == -2){
+        if (dx == -velocity){
             ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/turningleft.gif");
             objectImg = ii.getImage();
         }
@@ -150,7 +149,6 @@ public class Player extends Object implements Character {
             bombs.add(new Bomb(bombX, bombY, range));
         }
     }
-
 
     @Override
     public void move(Board board) {
@@ -248,13 +246,21 @@ public class Player extends Object implements Character {
             ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/dying.png");
             this.objectImg = ii.getImage();
         }
-        /*if (isAlive == 2){
-            boolean noFireLeft = true;
-            for (Object o : board.getMap().objectList){
-                if (o instanceof Fire) noFireLeft = false;
+
+        for (Object o : board.getMap().objectList){
+            if (o instanceof SpeedItem && ((SpeedItem) o).collideWithPlayer){
+                speedUp();
+                ((SpeedItem) o).existence = false;
             }
-            if (noFireLeft) isAlive = 0;
-        }*/
+            if (o instanceof FlameItem && ((FlameItem) o).collideWithPlayer){
+                increaseBombRange();
+                ((FlameItem) o).existence = false;
+            }
+            if (o instanceof BombItem && ((BombItem) o).collideWithPlayer){
+                addBombSlot();
+                ((BombItem) o).existence = false;
+            }
+        }
     }
 
     @Override
@@ -262,26 +268,22 @@ public class Player extends Object implements Character {
         int key = e.getKeyCode();
 
         if (key == KeyEvent.VK_RIGHT) {
-            dx = 2;
-            direction = 1;
+            dx = velocity;
             updateMove();
         }
 
         if (key == KeyEvent.VK_LEFT) {
-            dx = -2;
-            direction = 2;
+            dx = -velocity;
             updateMove();
         }
 
         if (key == KeyEvent.VK_UP) {
-            dy = -2;
-            direction = 3;
+            dy = -velocity;
             updateMove();
         }
 
         if (key == KeyEvent.VK_DOWN) {
-            dy = 2;
-            direction = 4;
+            dy = velocity;
             updateMove();
         }
 

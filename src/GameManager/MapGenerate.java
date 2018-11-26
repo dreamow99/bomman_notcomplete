@@ -16,7 +16,7 @@ public class MapGenerate {
     private int row;
     private int collumn;
 
-    public MapGenerate(Map map, Board board){
+    public MapGenerate(Map map, Board board) {
         File inFile = new File("./assets/map/map.txt");
         Scanner sc = null;
         try {
@@ -40,7 +40,9 @@ public class MapGenerate {
                 else if (c == 'x') {map.add(new Portal(j*36, (i-2)*36)); map.add(new Crate(j*36, (i-2)*36));}
                 else if (c == 'p') map.add(new Player(j*36, (i-2)*36, board));
                 else if (c == '1') map.add(new Enemy1(j*36 , (i-2)*36, board));
-
+                else if (c == 's') {map.add(new SpeedItem(j*36, (i-2)*36)); map.add(new Crate(j*36, (i-2)*36));}
+                else if (c == 'b') {map.add(new BombItem(j*36, (i-2)*36)); map.add(new Crate(j*36, (i-2)*36));}
+                else if (c == 'f') {map.add(new FlameItem(j*36, (i-2)*36)); map.add(new Crate(j*36, (i-2)*36));}
             }
         }
     }

@@ -103,11 +103,11 @@ public class Fire extends Object{
     private int checkCollision(int x, int y, Map map) {
         for (Object o : map.objectList){
             if (o instanceof Portal) continue;
-            if (o.getX() == x && o.getY() == y && !o.isDestroyable() && !(o instanceof Fire)){
+            if (o.getX() == x && o.getY() == y && o instanceof FixedWall){
                 //System.out.println(x + " " + y + " " + o.toString());
                 return 0;
             }
-            if (o.getX() == x && o.getY() == y && o.isDestroyable() && !o.isCollidable() && !(o instanceof Fire))
+            if (o.getX() == x && o.getY() == y && o instanceof Crate)
                 return 1;
         }
         return 2;
