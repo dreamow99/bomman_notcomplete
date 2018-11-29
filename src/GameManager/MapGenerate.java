@@ -2,7 +2,12 @@ package GameManager;
 
 import Objects.*;
 import Objects.Character.Enemy1;
+import Objects.Character.Oneal;
 import Objects.Character.Player;
+import Objects.Item.BombItem;
+import Objects.Item.FlameItem;
+import Objects.Item.Portal;
+import Objects.Item.SpeedItem;
 import Objects.Object;
 import Screens.Board;
 
@@ -40,6 +45,7 @@ public class MapGenerate {
                 else if (c == 'x') {map.add(new Portal(j*36, (i-2)*36)); map.add(new Crate(j*36, (i-2)*36));}
                 else if (c == 'p') map.add(new Player(j*36, (i-2)*36, board));
                 else if (c == '1') map.add(new Enemy1(j*36 , (i-2)*36, board));
+                else if (c == '2') map.add(new Oneal(j*36 , (i-2)*36, board));
                 else if (c == 's') {map.add(new SpeedItem(j*36, (i-2)*36)); map.add(new Crate(j*36, (i-2)*36));}
                 else if (c == 'b') {map.add(new BombItem(j*36, (i-2)*36)); map.add(new Crate(j*36, (i-2)*36));}
                 else if (c == 'f') {map.add(new FlameItem(j*36, (i-2)*36)); map.add(new Crate(j*36, (i-2)*36));}

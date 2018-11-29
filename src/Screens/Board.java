@@ -3,7 +3,11 @@ package Screens;
 
 import Objects.*;
 import Objects.Character.Enemy1;
+import Objects.Character.Oneal;
 import Objects.Character.Player;
+import Objects.Item.BombItem;
+import Objects.Item.FlameItem;
+import Objects.Item.SpeedItem;
 import Objects.Object;
 
 import javax.swing.*;
@@ -19,6 +23,7 @@ public class Board extends JPanel implements ActionListener {
     private Map map;
     private final int delay = 1;
     private Player player;
+    private boolean inGame = true;
 
     public Board(){
         initBoard();
@@ -46,6 +51,7 @@ public class Board extends JPanel implements ActionListener {
 
     public void update(Graphics g) {
         if (player.isAlive == 0){
+            inGame = false;
             //TO DO : lam game over
         }
         for (int i = 0; i < map.objectList.size(); i++)
@@ -53,12 +59,16 @@ public class Board extends JPanel implements ActionListener {
             Object o = map.objectList.get(i);
             if (o instanceof Enemy1)
                 ((Enemy1) o).move(this);
+            if (o instanceof Oneal)
+                ((Oneal) o).move(this);
             if (o instanceof Crate)
                 ((Crate) o).update(this);
             if (o instanceof Player)
                 ((Player) o).update();
             if (o instanceof Enemy1)
                 ((Enemy1) o).update();
+            if (o instanceof Oneal)
+                ((Oneal) o).update();
             if (o instanceof SpeedItem)
                 ((SpeedItem) o).update(this);
             if (o instanceof BombItem)
@@ -83,6 +93,10 @@ public class Board extends JPanel implements ActionListener {
             }
             if (o instanceof Enemy1){
                 if(((Enemy1) o).isAlive == 0)
+                    map.objectList.remove(o);
+            }
+            if (o instanceof Oneal){
+                if(((Oneal) o).isAlive == 0)
                     map.objectList.remove(o);
             }
             if (o instanceof SpeedItem){
@@ -134,9 +148,9 @@ public class Board extends JPanel implements ActionListener {
         map.add(o);
     }
 
-    public void deleteObject(Object o){
-        map.objectList.remove(o);
-    }
+    //public void deleteObject(Object o){
+        //map.objectList.remove(o);
+    //}
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -148,10 +162,21 @@ public class Board extends JPanel implements ActionListener {
 
     private void doDrawing(Graphics g){
         Graphics2D g2d = (Graphics2D) g;
-
-        map.draw(g2d, this);
+        if (inGame)
+            map.draw(g2d, this);
+        else gameOver(g);
     }
 
+    private void gameOver(Graphics g) {
+
+        String msg = "Game Over";
+        Font small = new Font("Helvetica", Font.BOLD, 14);
+        FontMetrics metr = getFontMetrics(small);
+
+        g.setColor(Color.white);
+        g.setFont(small);
+        g.drawString(msg, (map.getMapRow() - metr.stringWidth(msg)) / 2, map.getMapCollumn() / 2);
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {

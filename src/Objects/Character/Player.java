@@ -1,6 +1,9 @@
 package Objects.Character;
 
 import Objects.*;
+import Objects.Item.BombItem;
+import Objects.Item.FlameItem;
+import Objects.Item.SpeedItem;
 import Objects.Object;
 import Screens.Board;
 
@@ -40,13 +43,13 @@ public class Player extends Object implements Character {
         this.board = board;
     }
 
-    public void addBombSlot(){
+    private void addBombSlot(){
         bombSlot++;
     }
 
-    public void increaseBombRange() { bombRange++; }
+    private void increaseBombRange() { bombRange++; }
 
-    public void speedUp() { velocity = (velocity + 1)%3 + 1; }
+    private void speedUp() { velocity = (velocity + 1)%3 + 1; }
 
     @Override
     public void updateMove() {
@@ -191,8 +194,7 @@ public class Player extends Object implements Character {
                 canMoveLeft = true;
             }
         }
-        else if (!canMoveUp || !canMoveDown)
-        {
+        else {
             x += dx;
             y += 0.1;
             if (!canMoveUp)
@@ -245,6 +247,7 @@ public class Player extends Object implements Character {
         if (isAlive == 2){
             ImageIcon ii = new ImageIcon("./assets/img/res/character/ct/dying.png");
             this.objectImg = ii.getImage();
+            isAlive = 0;
         }
 
         for (Object o : board.getMap().objectList){

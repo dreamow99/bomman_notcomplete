@@ -1,5 +1,6 @@
 package Objects;
 
+import Objects.Item.Portal;
 import Screens.Board;
 
 public class Fire extends Object{
