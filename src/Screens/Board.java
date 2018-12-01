@@ -7,6 +7,7 @@ import Objects.Character.Oneal;
 import Objects.Character.Player;
 import Objects.Item.BombItem;
 import Objects.Item.FlameItem;
+import Objects.Item.Portal;
 import Objects.Item.SpeedItem;
 import Objects.Object;
 
@@ -19,19 +20,22 @@ import java.awt.event.KeyEvent;
 
 public class Board extends JPanel implements ActionListener {
 
-    private Timer timer;
     private Map map;
-    private final int delay = 1;
     private Player player;
-    private boolean inGame = true;
+    private boolean loose = false;
+    private boolean win = false;
+    private int enemyLeft;
 
     public Board(){
         initBoard();
     }
 
     private void initBoard(){
+        Timer timer;
+        int delay = 1;
         addKeyListener(new TAdapter());
         map = new Map(this);
+        enemyLeft = map.getEnemy();
         timer = new Timer(delay, this);
         timer.start();
         this.setFocusable(true);
@@ -51,8 +55,7 @@ public class Board extends JPanel implements ActionListener {
 
     public void update(Graphics g) {
         if (player.isAlive == 0){
-            inGame = false;
-            //TO DO : lam game over
+            loose = true;
         }
         for (int i = 0; i < map.objectList.size(); i++)
         {
@@ -75,6 +78,8 @@ public class Board extends JPanel implements ActionListener {
                 ((BombItem) o).update(this);
             if (o instanceof FlameItem)
                 ((FlameItem) o).update(this);
+            if (o instanceof Portal && enemyLeft == 0)
+                ((Portal) o).update(this);
         }
 
         for (int i = 0; i < map.objectList.size(); i++)
@@ -92,12 +97,16 @@ public class Board extends JPanel implements ActionListener {
                     map.objectList.remove(o);
             }
             if (o instanceof Enemy1){
-                if(((Enemy1) o).isAlive == 0)
+                if(((Enemy1) o).isAlive == 0) {
+                    enemyLeft--;
                     map.objectList.remove(o);
+                }
             }
             if (o instanceof Oneal){
-                if(((Oneal) o).isAlive == 0)
+                if(((Oneal) o).isAlive == 0) {
+                    enemyLeft--;
                     map.objectList.remove(o);
+                }
             }
             if (o instanceof SpeedItem){
                 if (!((SpeedItem) o).existence)
@@ -110,6 +119,12 @@ public class Board extends JPanel implements ActionListener {
             if (o instanceof FlameItem){
                 if (!((FlameItem) o).existence)
                     map.objectList.remove(o);
+            }
+            if (o instanceof Portal){
+                if (!((Portal) o).existence) {
+                    win = true;
+                    map.objectList.remove(o);
+                }
             }
         }
 
@@ -148,13 +163,16 @@ public class Board extends JPanel implements ActionListener {
         map.add(o);
     }
 
-    //public void deleteObject(Object o){
-        //map.objectList.remove(o);
-    //}
+    public int getWidth(){
+        return (map.getMapCollumn()) * 36 + 6;
+    }
+
+    public int getHeight(){
+        return (map.getMapRow()) * 36 + 29;
+    }
 
     @Override
     protected void paintComponent(Graphics g) {
-        update(g);
         super.paintComponent(g);
         doDrawing(g);
         Toolkit.getDefaultToolkit().sync();
@@ -162,20 +180,30 @@ public class Board extends JPanel implements ActionListener {
 
     private void doDrawing(Graphics g){
         Graphics2D g2d = (Graphics2D) g;
-        if (inGame)
+        if (!loose && !win){
+            update(g);
             map.draw(g2d, this);
-        else gameOver(g);
+        }
+        if (win && !loose) win(g);
+        if (!win && loose) gameOver(g);
+    }
+
+    private void win(Graphics g){
+        Image gameOverImg;
+        ImageIcon ii = new ImageIcon("assets/img/res/win.png");
+        gameOverImg = ii.getImage();
+        g.drawImage(gameOverImg, 0, 0, this);
     }
 
     private void gameOver(Graphics g) {
+        Image gameOverImg;
+        ImageIcon ii = new ImageIcon("assets/img/res/gameover.png");
+        gameOverImg = ii.getImage();
+        g.drawImage(gameOverImg, 0, 0, this);
+    }
 
-        String msg = "Game Over";
-        Font small = new Font("Helvetica", Font.BOLD, 14);
-        FontMetrics metr = getFontMetrics(small);
-
-        g.setColor(Color.white);
-        g.setFont(small);
-        g.drawString(msg, (map.getMapRow() - metr.stringWidth(msg)) / 2, map.getMapCollumn() / 2);
+    public int getCurrentEnemies(){
+        return enemyLeft;
     }
 
     @Override

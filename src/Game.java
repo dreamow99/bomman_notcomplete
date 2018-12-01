@@ -5,8 +5,8 @@ import javax.swing.JFrame;
 import java.awt.EventQueue;
 
 public class Game extends JFrame {
-    private final int gameWidth = 1280;
-    private final int gameHeight = 720;
+    private int gameWidth;
+    private int gameHeight;
     private final String gameTitle = "Bomberman";
     private Board board;
 
@@ -14,18 +14,21 @@ public class Game extends JFrame {
         initUI();
     }
     private void initUI(){
-            board = new Board();
-            add(board);
-            pack();
-            setTitle(gameTitle);
-            setSize(gameWidth, gameHeight);
-            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setLocationRelativeTo(null);
-            setResizable(false);
-        }
+        board = new Board();
+        gameWidth = board.getWidth();
+        gameHeight = board.getHeight();
+        add(board);
+        setResizable(false);
+        pack();
+        setTitle(gameTitle);
+        setSize(gameWidth, gameHeight);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        public static void main(String[] args){
-                EventQueue.invokeLater( () -> {
+    }
+
+    public static void main(String[] args){
+        EventQueue.invokeLater( () -> {
             Game ex = new Game();
             ex.setVisible(true);
         });

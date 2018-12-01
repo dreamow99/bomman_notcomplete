@@ -3,6 +3,7 @@ package Objects.Character;
 import Objects.*;
 import Objects.Item.BombItem;
 import Objects.Item.FlameItem;
+import Objects.Item.Portal;
 import Objects.Item.SpeedItem;
 import Objects.Object;
 import Screens.Board;
@@ -212,7 +213,7 @@ public class Player extends Object implements Character {
     private boolean fireOrEnemy(int x, int y, Map map){
         for (int i = 0; i < map.objectList.size(); i++){
             Object checkObject = map.objectList.get(i);
-            if (checkObject instanceof Fire || checkObject instanceof Enemy1){
+            if (checkObject instanceof Fire || checkObject instanceof Enemy1 || checkObject instanceof Oneal){
                 if (x == checkObject.getX() && y == checkObject.getY())
                     return true;
                 if (y < checkObject.getY() + checkObject.getHeight() && x + width > checkObject.getX() && checkObject.getX() > x
@@ -262,6 +263,9 @@ public class Player extends Object implements Character {
             if (o instanceof BombItem && ((BombItem) o).collideWithPlayer){
                 addBombSlot();
                 ((BombItem) o).existence = false;
+            }
+            if (o instanceof Portal && ((Portal) o).collideWithPlayer && board.getCurrentEnemies() == 0){
+                ((Portal) o).existence = false;
             }
         }
     }

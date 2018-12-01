@@ -12,9 +12,11 @@ import java.util.ArrayList;
 public class Map {
     public ArrayList<Object> objectList;
     private MapGenerate mapGenerator;
+    private int enemys;
 
     public Map(Board board) {
         mapGenerator = new MapGenerate(this, board);
+        enemys = mapGenerator.getEnemyCount();
     }
 
 
@@ -29,6 +31,8 @@ public class Map {
     public int getMapCollumn() {
         return mapGenerator.getCollumn();
     }
+
+    public int getEnemy() { return enemys; }
 
     /**
      * update map as objects change
