@@ -8,6 +8,10 @@ import Screens.Board;
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 
+/**
+ * Oneal class
+ */
+
 public class Oneal extends Object implements Character {
 
     private int dx = 0;
@@ -19,6 +23,12 @@ public class Oneal extends Object implements Character {
     // r l u d 1 2 3 4
     private int direction = 0;
 
+    /**
+     * constructor
+     * @param x x coordinate
+     * @param y y coordinate
+     * @param board board to render
+     */
     public Oneal(int x, int y, Board board) {
         super("character/t/t2/default", false);
         this.x = x;
@@ -30,6 +40,9 @@ public class Oneal extends Object implements Character {
         isAlive = 1;
     }
 
+    /**
+     * moving animation
+     */
     @Override
     public void updateMove(){
         //turning right
@@ -55,36 +68,576 @@ public class Oneal extends Object implements Character {
             ImageIcon ii = new ImageIcon("./assets/img/res/character/t/t2/goingdown.gif");
             objectImg = ii.getImage();
         }
-
+        board.repaint();
     }
 
-
+    /**
+     * check whether can move or not
+     * @param x current x coordinate
+     * @param y current y coordinate
+     * @param dx next move
+     * @param dy next move
+     * @param map map to check
+     * @return true or false
+     */
     @Override
     public boolean preCheckCollision(int x, int y, int dx, int dy, Map map) {
+        for (int i = 0; i < map.objectList.size(); i++){
+            Object checkObject = map.objectList.get(i);
+            if (y < checkObject.getY() + checkObject.getHeight() && x + dx + width > checkObject.getX() && checkObject.getX() > x
+                    && y + height > checkObject.getY() && dx == 1 && dy == 0)
+            {
+                if (!checkObject.isCollidable())
+                {
+                    //System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
+                    return false;
+                }
+            }
+            if (y < checkObject.getY() + checkObject.getHeight() && x + dx < checkObject.getX() + checkObject.getWidth()
+                    && checkObject.getX() < x
+                    && y + height > checkObject.getY() && dx == -1 && dy == 0) {
+                if (!checkObject.isCollidable()){
+                    //System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
+                    return false;
+                }
+            }
+            if (y + dy < checkObject.getY() + checkObject.getHeight() && x < checkObject.getX() + checkObject.getWidth()
+                    && checkObject.getX() < x + width
+                    && checkObject.getY() < y && dx == 0 && dy == -1) {
+                if (!checkObject.isCollidable()){
+                    //System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
+                    return false;
+                }
+            }
+            if (y + dy + height > checkObject.getY() && x < checkObject.getX() + checkObject.getWidth()
+                    && checkObject.getX() < x + width
+                    && checkObject.getY() > y && dx == 0 && dy == 1) {
+                if (!checkObject.isCollidable()){
+                    //System.out.println(checkObject.getX() + " " + checkObject.getY() + " " + checkObject.toString());
+                    return false;
+                }
+            }
+        }
         return true;
     }
 
+    /**
+     * check collison
+     * @param x x coordinate
+     * @param y y coordinate
+     * @param dx x velocity
+     * @param dy y velocity
+     * @param map map to check
+     */
     @Override
     public void checkCollision(int x, int y, int dx, int dy, Map map) {
         // r l u d
-
-
     }
 
+    /**
+     * move
+     * @param board board to render
+     */
     @Override
     public void move(Board board) {
-        //nếu chết thì ko đi nữa
         if (isAlive == 2){
             dx = 0;
             dy = 0;
             return;
         }
+        boolean canMoveUp = preCheckCollision(x, y, 0, -1, board.getMap());
+        boolean canMoveDown = preCheckCollision(x, y, 0, 1, board.getMap());
+        boolean canMoveLeft = preCheckCollision(x, y, -1, 0, board.getMap());
+        boolean canMoveRight = preCheckCollision(x, y, 1, 0, board.getMap());
+
+        //System.out.println(canMoveLeft + " " + canMoveRight + " " + canMoveUp + " " + canMoveDown);
+        //System.out.println(direction);
+        int xPlayer = board.getXPlayer();
+        int yPlayer = board.getYPlayer();
+        //int yOneal = board.getYOneal(board.getMap());
+        //int  = board.getx(board.getMap());
+        // 1 way to go - up
+        if (!canMoveLeft && !canMoveRight && canMoveUp && !canMoveDown){
+            direction = 3;
+            dy = -1;
+            dx = 0;
+        }
+        // 1 way to go - down
+        if (!canMoveLeft && !canMoveRight && !canMoveUp && canMoveDown){
+            direction = 4;
+            dy = 1;
+            dx = 0;
+        }
+        // 1 way to go - left
+        if (canMoveLeft && !canMoveRight && !canMoveUp && !canMoveDown){
+            direction = 2;
+            dy = 0;
+            dx = -1;
+        }
+        // 1 way to go - right
+        if (!canMoveLeft && canMoveRight && !canMoveUp && !canMoveDown){
+            direction = 1;
+            dy = 0;
+            dx = 1;
+        }
+        // 2 ways to go - up down
+        if (!canMoveLeft && !canMoveRight && canMoveUp && canMoveDown){
+            if (direction != 3 && direction != 4){
+                direction = (int) (Math.random() * 50) % 2;
+                if (direction == 0) {
+                    direction = 3;
+                    dx = 0;
+                    dy = -1;
+                }
+                else {
+                    direction = 4;
+                    dx = 0;
+                    dy = 1;
+                }
+            }
+            else {
+                if (direction == 3) {
+                    dx = 0;
+                    dy = -1;
+                }
+                else {
+                    dx = 0;
+                    dy = 1;
+                }
+            }
+        }
+
+        //2 ways to go - left right
+        if (canMoveLeft && canMoveRight && !canMoveUp && canMoveDown){
+            if (direction != 1 && direction != 2){
+                direction = (int) (Math.random() * 50) % 2;
+                if (direction == 0) {
+                    direction = 1;
+                    dx = 1;
+                    dy = 0;
+                }
+                else {
+                    direction = 2;
+                    dx = -1;
+                    dy = 0;
+                }
+            }
+            else {
+                if (direction == 1) {
+                    dx = 1;
+                    dy = 0;
+                }
+                else {
+                    dx = -1;
+                    dy = 0;
+                }
+            }
+        }
+
+        // 2 ways to go - up right
+        if (!canMoveLeft && canMoveRight && canMoveUp && !canMoveDown){
+            if (direction != 1 && direction != 3){
+                direction = (int) (Math.random() * 50) % 2;
+                if (direction == 0) {
+                    direction = 1;
+                    dx = 1;
+                    dy = 0;
+                }
+                else {
+                    direction = 3;
+                    dx = 0;
+                    dy = -1;
+                }
+            }
+            else {
+                if (direction == 1) {
+                    dx = 1;
+                    dy = 0;
+                }
+                else {
+                    dx = 0;
+                    dy = -1;
+                }
+            }
+        }
+
+        // 2 ways to go - up left
+        if (canMoveLeft && !canMoveRight && canMoveUp && !canMoveDown){
+            if (direction != 2 && direction != 3){
+                direction = (int) (Math.random() * 50) % 2;
+                if (direction == 0) {
+                    direction = 2;
+                    dx = -1;
+                    dy = 0;
+                }
+                else {
+                    direction = 3;
+                    dx = 0;
+                    dy = -1;
+                }
+            }
+            else {
+                if (direction == 2) {
+                    dx = -1;
+                    dy = 0;
+                }
+                else {
+                    dx = 0;
+                    dy = -1;
+                }
+            }
+        }
+
+        // 2 ways to go - down left
+        if (canMoveLeft && !canMoveRight && !canMoveUp && canMoveDown){
+            if (direction != 2 && direction != 4){
+                direction = (int) (Math.random() * 50) % 2;
+                if (direction == 0) {
+                    direction = 2;
+                    dx = -1;
+                    dy = 0;
+                }
+                else {
+                    direction = 4;
+                    dx = 0;
+                    dy = 1;
+                }
+            }
+            else {
+                if (direction == 2) {
+                    dx = -1;
+                    dy = 0;
+                }
+                else {
+                    dx = 0;
+                    dy = 1;
+                }
+            }
+        }
+
+        // 2 ways to go - down right
+        if (!canMoveLeft && canMoveRight && !canMoveUp && canMoveDown){
+            if (direction != 1 && direction != 4){
+                direction = (int) (Math.random() * 50) % 2;
+                if (direction == 0) {
+                    direction = 1;
+                    dx = 1;
+                    dy = 0;
+                }
+                else {
+                    direction = 4;
+                    dx = 0;
+                    dy = 1;
+                }
+            }
+            else {
+                if (direction == 1) {
+                    dx = 1;
+                    dy = 0;
+                }
+                else {
+                    dx = 0;
+                    dy = 1;
+                }
+            }
+        }
 
 
+        // 3 ways to go - up down right
+        if (!canMoveLeft && canMoveRight && canMoveUp && canMoveDown){
+            //int turnOrNot = (int )(Math.random() * 50) % 2;
+            if (direction == 2 || direction == 0){
+                direction = (int) (Math.random() * 50) % 3;
+                if (direction == 0) {
+                    direction = 1;
+                    dx = 1;
+                    dy = 0;
+                }
+                else if (direction == 1)
+                {
+                    direction = 4;
+                    dx = 0;
+                    dy = 1;
+                }
+                else {
+                    direction = 3;
+                    dx = 0;
+                    dy = -1;
+                }
+            }
+            else {
+                if (direction == 1){
+                    dx = 1;
+                    dy = 0;
+                }
+                if (direction == 3){
+                    dx = 0;
+                    dy = -1;
+                }
+                if (direction == 4){
+                    dx = 0;
+                    dy = 1;
+                }
+            }
+        }
 
+        // 3 ways to go - up down left
+        if (canMoveLeft && !canMoveRight && canMoveUp && canMoveDown){
+            if (direction == 1 || direction == 0){
+                direction = (int) (Math.random() * 50) % 3;
+                if (direction == 0) {
+                    direction = 2;
+                    dx = -1;
+                    dy = 0;
+                }
+                else if (direction == 1)
+                {
+                    direction = 4;
+                    dx = 0;
+                    dy = 1;
+                }
+                else {
+                    direction = 3;
+                    dx = 0;
+                    dy = -1;
+                }
+            }
+            else {
+                if (direction == 2){
+                    dx = -1;
+                    dy = 0;
+                }
+                if (direction == 3){
+                    dx = 0;
+                    dy = -1;
+                }
+                if (direction == 4){
+                    dx = 0;
+                    dy = 1;
+                }
+            }
+        }
 
+        // 3 ways to go - left right down
+        if (canMoveLeft && canMoveRight && !canMoveUp && canMoveDown){
+            if (direction == 3 || direction == 0){
+                direction = (int) (Math.random() * 50) % 3;
+                if (direction == 0) {
+                    direction = 2;
+                    dx = -1;
+                    dy = 0;
+                }
+                else if (direction == 1)
+                {
+                    direction = 4;
+                    dx = 0;
+                    dy = 1;
+                }
+                else {
+                    direction = 1;
+                    dx = 1;
+                    dy = 0;
+                }
+            }
+            else {
+                if (direction == 2){
+                    dx = -1;
+                    dy = 0;
+
+                }
+                if (direction == 1){
+                    dx = 1;
+                    dy = 0;
+                }
+                if (direction == 4){
+                    dx = 0;
+                    dy = 1;
+                }
+            }
+        }
+
+        // 3 ways to go - left right up
+        if (canMoveLeft && canMoveRight && canMoveUp && !canMoveDown){
+            if (direction == 4 || direction == 0){
+                direction = (int) (Math.random() * 50) % 3;
+                if (direction == 0) {
+                    direction = 2;
+                    dx = -1;
+                    dy = 0;
+                }
+                else if (direction == 1)
+                {
+                    direction = 3;
+                    dx = 0;
+                    dy = -1;
+                }
+                else {
+                    direction = 1;
+                    dx = 1;
+                    dy = 0;
+                }
+            }
+            else {
+                if (direction == 2){
+                    dx = -1;
+                    dy = 0;
+                }
+                if (direction == 1){
+                    dx = 1;
+                    dy = 0;
+                }
+                if (direction == 3){
+                    dx = 0;
+                    dy = -1;
+                }
+            }
+        }
+        //boolean isFollow = follow(canMoveLeft, canMoveUp, canMoveRight, canMoveDown);
+        if ((x == xPlayer) || (y == yPlayer)/*isFollow*/)
+        {
+            if (xPlayer > x)
+            {
+                if (canMoveRight) {
+
+                    direction = 1;
+                    dy = 0;
+                    dx = 1;
+                }
+                else
+                {
+                    if (yPlayer >= y)
+                    {
+                        dy = 1;
+                        dx = 1;
+                    }
+                    if (yPlayer < y)
+                    {
+                        dy = -1;
+                        dx = 1;
+                    }
+                }
+            }
+            else if (xPlayer < x) {
+                if (canMoveLeft) {
+                    direction = 2;
+                    dy = 0;
+                    dx = -1;
+                }
+                else
+                {
+                    if (yPlayer >= y)
+                    {
+                        dy = 1;
+                        dx = -1;
+                    }
+                    if (yPlayer < y)
+                    {
+                        dy = -1;
+                        dx = -1;
+                    }
+                }
+            }
+            else if (yPlayer > y) {
+                // 1 way to go - down
+                if (canMoveDown) {
+                    direction = 4;
+                    dy = 1;
+                    dx = 0;
+                }
+                else
+                {
+                    if (xPlayer >= x)
+                    {
+                        System.out.println("1");
+                        dy = 2;
+                        dx = 2;
+                    }
+                    else if (xPlayer <= x)
+                    {
+                        dy = 2;
+                        dx = -2;
+                    }
+                }
+            }
+            else if (yPlayer < y)
+            {
+                if (canMoveUp){
+                    direction = 3;
+                    dy = -1;
+                    dx = 0;
+                }
+                else
+                {
+
+                    if (xPlayer >= x)
+                    {
+                        System.out.println("1");
+                        dy = -2;
+                        dx = 2;
+                    }
+                    else if (xPlayer <= x)
+                    {
+                        dy = -2;
+                        dx = -2;
+                    }
+                }
+            }
+        }
+        else {
+            if (direction == 0) {
+                direction = (int) (Math.random() * 50) % 4;
+                if (direction == 0) {
+                    direction = 2;
+                    dx = -1;
+                    dy = 0;
+                }
+                if (direction == 1) {
+                    direction = 3;
+                    dx = 0;
+                    dy = -1;
+                }
+                if (direction == 2) {
+                    direction = 1;
+                    dx = 1;
+                    dy = 0;
+                } else {
+                    direction = 4;
+                    dx = 0;
+                    dy = 1;
+                }
+            } else {
+                if (direction == 2) {
+                    dx = -1;
+                    dy = 0;
+                }
+                if (direction == 1) {
+                    dx = 1;
+                    dy = 0;
+
+                }
+                if (direction == 3) {
+                    dx = 0;
+                    dy = -1;
+                }
+                if (direction == 4) {
+                    dx = 0;
+                    dy = 1;
+                }
+            }
+        }
+        updateMove();
+        y += dy;
+        x += dx;
     }
 
+    /**
+     * check when catch fire
+     * @param x x coor
+     * @param y y coor
+     * @param map map to check
+     * @return true/false
+     */
+    // TO DO: Check hoi ngao
     private boolean catchFire(int x, int y, Map map){
         for (int i = 0; i < map.objectList.size(); i++){
             Object checkObject = map.objectList.get(i);
@@ -111,6 +664,9 @@ public class Oneal extends Object implements Character {
         return false;
     }
 
+    /**
+     * up date isAlive
+     */
     @Override
     public void update() {
         if (isAlive == 1){
@@ -129,11 +685,19 @@ public class Oneal extends Object implements Character {
         }
     }
 
+    /**
+     * check key pressed
+     * @param e key event
+     */
     @Override
     public void keyPressed(KeyEvent e) {
 
     }
 
+    /**
+     * check key released
+     * @param e key event
+     */
     @Override
     public void keyReleased(KeyEvent e) {
 

@@ -8,7 +8,9 @@ import Screens.Board;
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 
-
+/**
+ * low-class enemy class
+ */
 public class Enemy1 extends Object implements Character {
 
     private int dx = 0;
@@ -20,6 +22,12 @@ public class Enemy1 extends Object implements Character {
     // r l u d 1 2 3 4
     private int direction = 0;
 
+    /**
+     * constructor
+     * @param x x coordinate
+     * @param y y coordinate
+     * @param board board
+     */
     public Enemy1(int x, int y, Board board) {
         super("character/t/t1/default", false);
         this.x = x;
@@ -31,6 +39,9 @@ public class Enemy1 extends Object implements Character {
         isAlive = 1;
     }
 
+    /**
+     * update move animation
+     */
     @Override
     public void updateMove(){
         //turning right
@@ -59,6 +70,15 @@ public class Enemy1 extends Object implements Character {
 
     }
 
+    /**
+     * check whether can move or not
+     * @param x current x
+     * @param y current y
+     * @param dx next x
+     * @param dy next y
+     * @param map map to check
+     * @return true or false
+     */
     @Override
     public boolean preCheckCollision(int x, int y, int dx, int dy, Map map) {
         for (int i = 0; i < map.objectList.size(); i++){
@@ -100,11 +120,23 @@ public class Enemy1 extends Object implements Character {
         return true;
     }
 
+    /**
+     * check collision
+     * @param x x coordinate
+     * @param y y coordinate
+     * @param dx x velocity
+     * @param dy y velocity
+     * @param map map to check
+     */
     @Override
     public void checkCollision(int x, int y, int dx, int dy, Map map) {
         // r l u d
     }
 
+    /**
+     * make a move
+     * @param board board to render
+     */
     @Override
     public void move(Board board) {
         if (isAlive == 2){
@@ -511,6 +543,13 @@ public class Enemy1 extends Object implements Character {
 
     }
 
+    /**
+     * check when catch fire
+     * @param x x coordinate
+     * @param y y coordinate
+     * @param map map to check
+     * @return true/false
+     */
     // TO DO: Check hoi ngao
     private boolean catchFire(int x, int y, Map map){
         for (int i = 0; i < map.objectList.size(); i++){
@@ -538,7 +577,9 @@ public class Enemy1 extends Object implements Character {
         return false;
     }
 
-
+    /**
+     * update enemy status
+     */
     @Override
     public void update() {
         if (isAlive == 1){
@@ -557,11 +598,19 @@ public class Enemy1 extends Object implements Character {
         }
     }
 
+    /**
+     * check key pressed
+     * @param e key event
+     */
     @Override
     public void keyPressed(KeyEvent e) {
 
     }
 
+    /**
+     * check key released
+     * @param e key event
+     */
     @Override
     public void keyReleased(KeyEvent e) {
 

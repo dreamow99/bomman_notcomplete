@@ -8,7 +8,6 @@ import Objects.Item.BombItem;
 import Objects.Item.FlameItem;
 import Objects.Item.Portal;
 import Objects.Item.SpeedItem;
-import Objects.Object;
 import Screens.Board;
 
 import java.io.File;
@@ -16,12 +15,20 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * generating a map
+ */
 public class MapGenerate {
     private int level;
     private int row;
     private int collumn;
     private int enemyCount = 0;
 
+    /**
+     * constructor
+     * @param map input map
+     * @param board board to draw
+     */
     public MapGenerate(Map map, Board board) {
         File inFile = new File("./assets/map/map.txt");
         Scanner sc = null;
@@ -60,9 +67,22 @@ public class MapGenerate {
         }
     }
 
-
+    /**
+     * count the enemies
+     * @return number of enemies
+     */
     public int getEnemyCount() { return this.enemyCount; }
+
+    /**
+     * get number of rows
+     * @return number of rows
+     */
     public int getRow(){ return this.row; }
+
+    /**
+     * get number of collumns
+     * @return number of collums
+     */
     public int getCollumn() { return this.collumn; }
 }
 

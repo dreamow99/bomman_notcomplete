@@ -1,3 +1,10 @@
+/**
+ * @author Pham Duc Duy
+ * @author Nguyen Huu Dat
+ * @version 1.0
+ * @since 14/11/2018
+ */
+
 package Objects;
 
 import Objects.Item.Portal;
@@ -10,6 +17,13 @@ public class Fire extends Object{
     public boolean isActive;
     private long time;
 
+    /**
+     * Contructor Fire. is that fire after boomb explosion
+     * @param x
+     * @param y
+     * @param range
+     * @param board
+     */
     Fire(int x, int y, int range, Board board){
         super("/bombs/fire-center", false);
         this.x = x;
@@ -24,6 +38,14 @@ public class Fire extends Object{
         initFire();
     }
 
+    /**
+     * Contructor Fire. is that fire after boomb explosion but It is private
+     * @param name
+     * @param x
+     * @param y
+     * @param range
+     * @param board
+     */
     private Fire(String name, int x, int y, int range, Board board){
         super("/bombs/fire-" + name, false);
         this.x = x;
@@ -37,6 +59,9 @@ public class Fire extends Object{
         time = System.currentTimeMillis();
     }
 
+    /**
+     * initFire method is use to init Fire
+     */
     private void initFire(){
 
         // go down
@@ -101,6 +126,13 @@ public class Fire extends Object{
 
     }
 
+    /**
+     * Overriding checkCollision method
+     * @param x
+     * @param y
+     * @param map
+     * @return
+     */
     private int checkCollision(int x, int y, Map map) {
         for (Object o : map.objectList){
             if (o instanceof Portal) continue;
@@ -114,6 +146,9 @@ public class Fire extends Object{
         return 2;
     }
 
+    /**
+     * Live method
+     */
     public void live(){
         if ((System.currentTimeMillis() - time)/1000F >= 0.5){
             isActive = false;

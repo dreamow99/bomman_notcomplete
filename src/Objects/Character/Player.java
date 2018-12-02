@@ -7,11 +7,15 @@ import Objects.Item.Portal;
 import Objects.Item.SpeedItem;
 import Objects.Object;
 import Screens.Board;
+import Sound.Sound;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
+/**
+ * player class
+ */
 public class Player extends Object implements Character {
 
     private int dx = 0;
@@ -30,6 +34,12 @@ public class Player extends Object implements Character {
 
     public ArrayList<Bomb> bombs;
 
+    /**
+     * constructor
+     * @param x x coor
+     * @param y y coor
+     * @param board board to render
+     */
     public Player(int x, int y, Board board){
         super("character/ct/default", false);
         this.x = x;
@@ -44,14 +54,26 @@ public class Player extends Object implements Character {
         this.board = board;
     }
 
+    /**
+     * add more bomb slots
+     */
     private void addBombSlot(){
         bombSlot++;
     }
 
+    /**
+     * increase bomb range
+     */
     private void increaseBombRange() { bombRange++; }
 
+    /**
+     * speed up the player
+     */
     private void speedUp() { velocity = (velocity + 1)%3 + 1; }
 
+    /**
+     * update move animation
+     */
     @Override
     public void updateMove() {
 
@@ -86,11 +108,28 @@ public class Player extends Object implements Character {
         }
     }
 
+    /**
+     * check collision
+     * @param x x
+     * @param y y
+     * @param dx dx
+     * @param dy dy
+     * @param map map
+     * @return true/false
+     */
     @Override
     public boolean preCheckCollision(int x, int y, int dx, int dy, Map map) {
         return false;
     }
 
+    /**
+     * get collision
+     * @param x x coordinate
+     * @param y y coordinate
+     * @param dx x velocity
+     * @param dy y velocity
+     * @param map map to check
+     */
     @Override
     public void checkCollision(int x, int y, int dx, int dy, Map map) {
 
@@ -130,6 +169,12 @@ public class Player extends Object implements Character {
         }
     }
 
+    /**
+     * check if can plan a bomb
+     * @param bombX bomb x coor
+     * @param bombY bomb y coor
+     * @return true/false
+     */
     private boolean canPlantBomb(int bombX, int bombY){
         int count = 0;
         for (Bomb i : bombs){
@@ -142,6 +187,12 @@ public class Player extends Object implements Character {
         return count < bombSlot;
     }
 
+    /**
+     * plan a bomb
+     * @param x bomb x
+     * @param y bomb y
+     * @param range bomb range
+     */
     private void bombHasBeenPlanted(int x, int y, int range){
         x += width/2;
         y += height/2;
@@ -150,10 +201,16 @@ public class Player extends Object implements Character {
         bombY = 36 * (y / 36);
 
         if (canPlantBomb(bombX, bombY)){
+            Sound planSound = new Sound("plan.wav");
+            planSound.play();
             bombs.add(new Bomb(bombX, bombY, range));
         }
     }
 
+    /**
+     * make a move
+     * @param board board to render
+     */
     @Override
     public void move(Board board) {
         checkCollision(x, y, dx, dy, board.getMap());
@@ -209,6 +266,13 @@ public class Player extends Object implements Character {
         }
     }
 
+    /**
+     * check if catch fire a collide with an enemy
+     * @param x player x
+     * @param y player y
+     * @param map map to check
+     * @return true/false
+     */
     // TO DO: Check hoi ngao
     private boolean fireOrEnemy(int x, int y, Map map){
         for (int i = 0; i < map.objectList.size(); i++){
@@ -236,7 +300,9 @@ public class Player extends Object implements Character {
         return false;
     }
 
-
+    /**
+     * update status
+     */
     @Override
     public void update() {
         if (isAlive == 1){
@@ -270,6 +336,10 @@ public class Player extends Object implements Character {
         }
     }
 
+    /**
+     * handle key pressed
+     * @param e key event
+     */
     @Override
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
@@ -300,6 +370,10 @@ public class Player extends Object implements Character {
 
     }
 
+    /**
+     * handle key released
+     * @param e key event
+     */
     @Override
     public void keyReleased(KeyEvent e) {
         int key = e.getKeyCode();
