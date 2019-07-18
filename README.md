@@ -1,2 +1,2 @@
-# bomman_notcomplete
-bomman first ver
+# bomman_actuallycompleted
+Bomberman remade with java OOP
